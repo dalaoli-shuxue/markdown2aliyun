@@ -12,14 +12,14 @@ def main(file_name):
     markdown = f.read()
     latexes = re.findall(r'[\$]{1,2}.*?[\$]{1,2}', markdown)
     n = 1
-    pathname = base64.b64encode(file_name.encode()).decode('ascii')
+    pathname = base64.b64encode(file_name.encode()).decode('ascii')[:16]
     for latex in latexes:
         local_latex_png = download_png(latex, "latex_" + str(n))
         upload_png(local_latex_png, pathname)
         latex_dict[latex] = get_latex_markdown("latex_" + str(n) + ".png", pathname)
         markdown = markdown.replace(latex, latex_dict[latex])
         n = n + 1
-    print(latex_dict)
+    #print(latex_dict)
     with open('output.md', 'w') as file:
         file.write(markdown)
 
@@ -35,9 +35,6 @@ def upload_png(filename, pathname):
     upload_result = subprocess.run(cmd, check=False)
     if upload_result.returncode != 0:
         print("uploading failed for file: " + filename)
-    else:
-        print("successfully uploading file: " + filename)
-
 
 def download_png(latex, filename):
     pic_site_url = "http://tex.s2cms.ru/png/"
